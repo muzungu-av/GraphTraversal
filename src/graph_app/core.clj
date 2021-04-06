@@ -34,3 +34,7 @@
                      (into explored (map #(nth % 0) neighbors))
                      (into (pop frontier) (remove explored (map #(nth % 0) neighbors)))))))))
    #{s} (conj (clojure.lang.PersistentQueue/EMPTY) s)))
+
+
+(defn convert-int-str [v]
+  (if (and (integer? v) (< v Integer/MAX_VALUE)) (clojure.string/upper-case (Integer/toString v 36)) nil))

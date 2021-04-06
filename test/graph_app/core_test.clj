@@ -20,3 +20,10 @@
 (deftest bfs-test
   (testing "Test seq-graph-bfs function with weight graph."
     (is (= (seq-graph-bfs G :1)  [:1 :2 :3 :4]))))
+
+(deftest convert-int-str-test
+  (testing "Test convert-int-str function"
+    (is (= (convert-int-str 2147483646) "ZIK0ZI"))
+    (is (= (convert-int-str 0) "0"))
+    (is (= (convert-int-str 360) "A0"))
+    ))
