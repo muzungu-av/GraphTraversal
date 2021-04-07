@@ -37,4 +37,15 @@
 
 
 (defn convert-int-str [v]
+  "Convert a Integer number to a Upper case String in 36 base."
   (if (and (integer? v) (< v Integer/MAX_VALUE)) (clojure.string/upper-case (Integer/toString v 36)) nil))
+
+(defn generate-series [n]
+  "Generates a series of string values of length N."
+  (let [series (take (+ n 1) (range))]
+    (map convert-int-str series)))
+
+(defn generate-empty-graph [n]
+  "Generates a empty graph with size N"
+  (let [res {}]
+    (into res (map #(hash-map % []) (map #(keyword %) (generate-series n))))))
