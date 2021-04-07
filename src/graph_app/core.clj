@@ -1,4 +1,5 @@
-(ns graph-app.core)
+(ns graph-app.core
+  (:require [clojure.zip :as z]))
 
 (defn traverse-graph-dfs [g s]
   (loop [vertices [] explored #{s} frontier [s]]
@@ -49,3 +50,12 @@
   "Generates a empty graph with size N"
   (let [res {}]
     (into res (map #(hash-map % []) (map #(keyword %) (generate-series n))))))
+
+(defn find-key-in-depth [k coll]
+  "Finding some value by the key in depth of collection."
+  (let [coll-zip (z/zipper coll? seq nil coll)]
+    (loop [x coll-zip]
+      (when-not (z/end? x)
+        (if-let [v (-> x z/node k)]
+          v
+          (recur (z/next x)))))))
