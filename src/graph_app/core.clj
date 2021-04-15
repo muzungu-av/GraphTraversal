@@ -70,60 +70,9 @@
   (let [a (all-empty g)]
     [(first a) (second a)]  ))
 
-; I stopped writing this code!
-; do not like how the storage of connections between the nodes of the graph (edges) is implemented.
-; We all know there are 2 ways - adjacency matrix and adjacency list.
-; The first has a drawback - a large memory consumption.
-; In the second, a long search for edges, for example, directed graphs.
-; I will try to implement my own way of representing a graph
-; based on sorted lists without these disadvantages.
-;
-;
-;Я перестал писать этот код!
-;Не нравится, как реализовано хранение связей между узлами графа (ребрами).
-;Все мы знаем, что есть 2 способа - матрица смежности и список смежности.
-;У первого есть недостаток - большой расход памяти.
-;Во втором - долгий поиск ребер, например ориентированных графов.
-;Я попытаюсь реализовать свой собственный способ представления графа
-;на основе отсортированных списков без этих недостатков.
-
-
-(def M {:1 []
-        :2 []
-        :3 []})
-
-(def G {
-        :1 ['(:2 1) '(:6 2)]
-        :2 ['(:3 4)]
-        :3 ['(:4 1) '(:5 2) '(:8 2)]
-        :4 []
-        :5 []
-        :6 ['(:7 7)]
-        :7 ['(:8 9)]
-        :8 ['(:9 1) '(:10 2)]
-        :9 ['(:10 5)]
-        :10 [],
-        })
-
 ;;build-minimal-spanning-tree
 (defn build-minimal-spanning-tree [G]
   (do
     (println "build-minimal-spanning-tree")
     G))
-
-(defn ff [G s]
-  (let [cnt (count (keys G))
-        from (- cnt 1)
-        to (* cnt (- cnt 1))]
-    (if (and (>= s from) (<= s to))
-      (do
-        (build-minimal-spanning-tree G)
-        (loop [j s]
-              (if (<= j 0)
-                G
-                (match [G j]
-                       [_ 1] (do (println from j) (recur (- j 1)))
-                       [_ 2] (do (println from j) (recur (- j 1)))
-                       [_ n] (do (println from n) (recur (- j 1)))))))
-      (do (println "Wrong s!") G))))
 
