@@ -48,3 +48,11 @@
 (deftest find-key-in-depth-test
   (testing "Test find-key-in-depth function."
     (is (= (find-key-in-depth :3 G) ['(:4 1) '(:5 2) '(:8 2)] ))))
+
+(deftest find-key-in-depth-test
+  (testing "Test link-pair-edges function."
+    (let [X {:1 ['(:2 1) '(:3 2)]
+             :2 ['(:3 4)]
+             :3 []}]
+      (is (= (link-pair-edges X :3 :1 "new")
+             {:1 ['(:2 1) '(:3 2)], :2 ['(:3 4)], :3 ['(:1 "new")]})))))

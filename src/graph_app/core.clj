@@ -70,9 +70,17 @@
   (let [a (all-empty g)]
     [(first a) (second a)]  ))
 
-;;build-minimal-spanning-tree
-(defn build-minimal-spanning-tree [G]
-  (do
-    (println "build-minimal-spanning-tree")
-    G))
+(defn link-pair-edges [G old-k new-k w]
+  "Return a graph that contains old-k connected to new-k.
+   It is not allowed duplicates."
+  (->>
+    (loop [v  (old-k G)
+           result [(list new-k w)]
+           found #{new-k}]
+      (if-let [[[k b] & tail] (seq v)]
+        (if (contains? found k)
+          (recur tail result found)
+          (recur tail (conj result (list k b)) (conj found k)))
+        result))
+    (assoc G old-k)))
 
