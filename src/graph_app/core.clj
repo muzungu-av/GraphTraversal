@@ -72,7 +72,8 @@
 
 (defn link-pair-edges [G old-k new-k w]
   "Return a graph that contains old-k connected to new-k.
-   It is not allowed duplicates."
+   It is not allowed duplicates.
+   It can build a graph from an empty. (This is not a bug - this is a feature :)"
   (->>
     (loop [v  (old-k G)
            result [(list new-k w)]
