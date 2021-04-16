@@ -49,7 +49,7 @@
   (testing "Test find-key-in-depth function."
     (is (= (find-key-in-depth :3 G) ['(:4 1) '(:5 2) '(:8 2)] ))))
 
-(deftest find-key-in-depth-test
+(deftest link-pair-edges-test
   (testing "Test link-pair-edges function."
     (let [X {:1 ['(:2 1) '(:3 2)]
              :2 ['(:3 4)]
