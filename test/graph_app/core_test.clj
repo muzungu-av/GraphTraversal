@@ -15,6 +15,11 @@
         :10 [],
         })
 
+(def X {
+        :1 []
+        :2 []
+        :3[]})
+
 (deftest traverse-test
   (testing "Test traverse-graph-dfs function with weight graph."
     (is (= (traverse-graph-dfs G :1) [:1 :6 :7 :8 :10 :9 :2 :3 :5 :4]))))
@@ -54,8 +59,17 @@
     (let [X {:1 ['(:2 1) '(:3 2)]
              :2 ['(:3 4)]
              :3 []}]
-      (is (= (link-pair-edges X :3 :1 "new")
-             {:1 ['(:2 1) '(:3 2)], :2 ['(:3 4)], :3 ['(:1 "new")]})))
+      (is (= (link-pair-edges X :3 :1 nil)
+             {:1 ['(:2 1) '(:3 2)], :2 ['(:3 4)], :3 ['(:1 0)]})))
       (is (=
-            (link-pair-edges (link-pair-edges {} :1 :2 "new") :2 :1 "new")
-            {:1 ['(:2 "new")], :2 ['(:1 "new")]}))))
+            (link-pair-edges (link-pair-edges {} :1 :2 0) :2 :1 nil)
+            {:1 ['(:2 0)], :2 ['(:1 0)]}))))
+
+(deftest build-graph-test
+  (testing "Test build-graph function."
+    (is (= (build-graph X 2) {:1 ['(:3 0) '(:2 0)], :2 [], :3 []}))
+    (is (= (build-graph X 3) {:1 ['(:3 0) '(:2 0)], :2 ['(:1 0)], :3 []}))
+    (is (= (build-graph X 4) {:1 ['(:3 0) '(:2 0)], :2 ['(:3 0) '(:1 0)], :3 []}))
+    (is (= (build-graph X 5) {:1 ['(:3 0) '(:2 0)], :2 ['(:3 0) '(:1 0)], :3 ['(:1 0)]}))
+    (is (= (build-graph X 6) {:1 ['(:3 0) '(:2 0)], :2 ['(:3 0) '(:1 0)], :3 ['(:2 0) '(:1 0)]}))
+    ))

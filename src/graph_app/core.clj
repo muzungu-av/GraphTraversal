@@ -65,23 +65,80 @@
   "Return a seq of empty graph keys"
   (filter (fn [x](empty?(g x))) (keys g)))
 
-(defn first-empty-pair [g]
-  "Return a first & second empty graph keys"
-  (let [a (all-empty g)]
-    [(first a) (second a)]  ))
+(defn- some-weight [& [w]]
+  (case w
+    true (rand-int 100)
+    0))
 
 (defn link-pair-edges [G old-k new-k w]
   "Return a graph that contains old-k connected to new-k.
    It is not allowed duplicates.
    It can build a graph from an empty. (This is not a bug - this is a feature :)"
-  (->>
-    (loop [v  (old-k G)
-           result [(list new-k w)]
-           found #{new-k}]
-      (if-let [[[k b] & tail] (seq v)]
-        (if (contains? found k)
-          (recur tail result found)
-          (recur tail (conj result (list k b)) (conj found k)))
-        result))
-    (assoc G old-k)))
+  (let [w (some-weight w)]
+    (->>
+      (loop [v  (old-k G)
+             result [(list new-k w)]
+             found #{new-k}]
+        (if-let [[[k b] & tail] (seq v)]
+          (if (contains? found k)
+            (recur tail result found)
+            (recur tail (conj result (list k b)) (conj found k)))
+          result))
+      (assoc G old-k))))
 
+(defn direct-prod
+  "Produces the Cartesian product of one vertex of the graph and the others.
+   Uncomment if you need to get as [(), ...]"
+  [x y]
+  ;(into []
+    (for [a [x]
+          b (remove #(= a %) y)]
+      [a b]  ;`(~a ~b)
+          )) ;)
+
+(defn- my-reduce
+  "A recursive function call with parameters with result accumulation."
+  [rfn acc coll built_in max]
+  (if-let [[x & xs] (seq coll)]
+    (if-let [_ (<= (inc built_in) max)]
+      (recur rfn (rfn acc x) xs (inc built_in) max)
+      (vector acc built_in))
+    (vector acc built_in)))
+
+(defn- call-my-reduce [G peek built_in max weight]
+  "Starts a recursion for the function."
+  (let [prod (direct-prod peek (keys G))]
+    (my-reduce
+      (fn ([acc element] (link-pair-edges acc (first element) (second element) weight)))
+      G prod built_in max)))
+
+(defn build-graph [G s & [w]]
+  "Builds a graph with edges (s).
+   The number of edges depends on the number of vertices. It can be from (N-1) to N(N-1).
+   The argument 'w' - is weight marker. If it is 'true' then a weight setting a random number else zero."
+  (let [all (all-empty G)
+        c   (count G)
+        min (- c 1)
+        max (* c (- c 1))]
+    (if (or (< s min ) (> s max))
+      (println "The number of edges is out of bounds: " s)
+      (loop [graph          G
+             peek           (first all)
+             kinds          (dec (count all))
+             built_in       0
+             remaining      s
+             check_alg      (>= kinds remaining)
+             cycles         0]
+        (if (< built_in remaining)
+          (if check_alg
+            (let [result (call-my-reduce graph peek built_in remaining w)
+                  graph  (first result)]
+              graph)
+            (let [result    (call-my-reduce graph peek built_in remaining w)
+                  graph     (first result)
+                  built_in  (second result)
+                  kinds     (count all)
+                  check_alg (>= kinds remaining)
+                  cycles    (inc cycles)]
+              (recur graph (nth all cycles nil) kinds built_in remaining check_alg cycles)))
+          graph)))))
