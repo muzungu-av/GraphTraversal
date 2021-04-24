@@ -45,7 +45,7 @@
   (testing "Test generate-series function."
     (is (= (generate-series 5)  ["0" "1" "2" "3" "4" "5"]))))
 
-(def empt-G {:0 [], :1 [], :2 [], :3 [], :4 [], :5 [], :6 [], :7 []})
+(def empt-G {:0 [], :1 [], :2 [], :3 [], :4 [], :5 [], :6 []})
 (deftest generate-empty-graph-test
   (testing "Test generate-empty-graph function."
     (is (= (generate-empty-graph 7) empt-G))))
@@ -67,9 +67,8 @@
 
 (deftest build-graph-test
   (testing "Test build-graph function."
-    (is (= (build-graph X 2) {:1 ['(:3 0) '(:2 0)], :2 [], :3 []}))
-    (is (= (build-graph X 3) {:1 ['(:3 0) '(:2 0)], :2 ['(:1 0)], :3 []}))
-    (is (= (build-graph X 4) {:1 ['(:3 0) '(:2 0)], :2 ['(:3 0) '(:1 0)], :3 []}))
-    (is (= (build-graph X 5) {:1 ['(:3 0) '(:2 0)], :2 ['(:3 0) '(:1 0)], :3 ['(:1 0)]}))
-    (is (= (build-graph X 6) {:1 ['(:3 0) '(:2 0)], :2 ['(:3 0) '(:1 0)], :3 ['(:2 0) '(:1 0)]}))
-    ))
+    (is (= (build-graph 3 2) {:0 ['(:2 0) '(:1 0)], :1 [], :2 []}))
+    (is (= (build-graph 3 3) {:0 ['(:2 0) '(:1 0)], :1 ['(:0 0)], :2 []}))
+    (is (= (build-graph 3 4) {:0 ['(:2 0) '(:1 0)], :1 ['(:2 0) '(:0 0)], :2 []}))
+    (is (= (build-graph 3 5) {:0 ['(:2 0) '(:1 0)], :1 ['(:2 0) '(:0 0)], :2 ['(:0 0)]}))
+    (is (= (build-graph 3 6) {:0 ['(:2 0) '(:1 0)], :1 ['(:2 0) '(:0 0)], :2 ['(:1 0) '(:0 0)]}))))

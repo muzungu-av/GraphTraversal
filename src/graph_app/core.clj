@@ -50,7 +50,7 @@
 (defn generate-empty-graph [n]
   "Generates a empty graph with size N"
   (let [res {}]
-    (into res (map #(hash-map % []) (map #(keyword %) (generate-series n))))))
+    (into res (map #(hash-map % []) (map #(keyword %) (generate-series (dec n) ))))))
 
 (defn find-key-in-depth [k coll]
   "Finding some value by the key in depth of collection."
@@ -112,17 +112,18 @@
       (fn ([acc element] (link-pair-edges acc (first element) (second element) weight)))
       G prod built_in max)))
 
-(defn build-graph [G s & [w]]
-  "Builds a graph with edges (s).
+(defn build-graph [g s & [w]]
+  "Builds a graph with vertexes (g) and edges (s).
    The number of edges depends on the number of vertices. It can be from (N-1) to N(N-1).
    The argument 'w' - is weight marker. If it is 'true' then a weight setting a random number else zero."
-  (let [all (all-empty G)
-        c   (count G)
+  (let [graph (generate-empty-graph g)
+        all (all-empty graph)
+        c   (count graph)
         min (- c 1)
         max (* c (- c 1))]
     (if (or (< s min ) (> s max))
       (println "The number of edges is out of bounds: " s)
-      (loop [graph          G
+      (loop [graph          graph
              peek           (first all)
              kinds          (dec (count all))
              built_in       0
