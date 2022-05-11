@@ -1,5 +1,6 @@
 (ns graph-app.core
-  (:require [clojure.zip :as z])
+  (:require [clojure.string :as string]
+            [clojure.zip :as z])
   (:require [clojure.core.match :refer [match]]) )
 
 (defn traverse-graph-dfs [g s]
@@ -39,21 +40,21 @@
 
 
 (defn convert-int-str [v]
-  "Convert a Integer number to a Upper case String in 36 base."
-  (if (and (integer? v) (< v Integer/MAX_VALUE)) (clojure.string/upper-case (Integer/toString v 36)) nil))
+  ;;Convert a Integer number to a Upper case String in 36 base.
+  (if (and (integer? v) (< v Integer/MAX_VALUE)) (string/upper-case (Integer/toString v 36)) nil))
 
 (defn generate-series [n]
-  "Generates a series of string values of length N."
+  ;;"Generates a series of string values of length N.
   (let [series (take (+ n 1) (range))]
     (map convert-int-str series)))
 
 (defn generate-empty-graph [n]
-  "Generates a empty graph with size N"
+  ;;"Generates a empty graph with size N
   (let [res {}]
     (into res (map #(hash-map % []) (map #(keyword %) (generate-series (dec n) ))))))
 
 (defn find-key-in-depth [k coll]
-  "Finding some value by the key in depth of collection."
+  ;;"Finding some value by the key in depth of collection.
   (let [coll-zip (z/zipper coll? seq nil coll)]
     (loop [x coll-zip]
       (when-not (z/end? x)
@@ -62,7 +63,7 @@
           (recur (z/next x)))))))
 
 (defn all-empty [g]
-  "Return a seq of empty graph keys"
+  ;;Return a seq of empty graph keys
   (filter (fn [x](empty?(g x))) (keys g)))
 
 (defn- some-weight [& [w]]
@@ -71,9 +72,9 @@
     0))
 
 (defn link-pair-edges [G old-k new-k w]
-  "Return a graph that contains old-k connected to new-k.
-   It is not allowed duplicates.
-   It can build a graph from an empty. (This is not a bug - this is a feature :)"
+  ;;Return a graph that contains old-k connected to new-k.
+  ;;It is not allowed duplicates.
+  ;;It can build a graph from an empty. (This is not a bug - this is a feature
   (let [w (some-weight w)]
     (->>
       (loop [v  (old-k G)
@@ -87,8 +88,8 @@
       (assoc G old-k))))
 
 (defn direct-prod
-  "Produces the Cartesian product of one vertex of the graph and the others.
-   Uncomment if you need to get as [(), ...]"
+  ;;Produces the Cartesian product of one vertex of the graph and the others.
+  ;;Uncomment if you need to get as [(), ...]
   [x y]
   ;(into []
     (for [a [x]
@@ -97,7 +98,7 @@
           )) ;)
 
 (defn- my-reduce
-  "A recursive function call with parameters with result accumulation."
+  ;;A recursive function call with parameters with result accumulation.
   [rfn acc coll built_in max]
   (if-let [[x & xs] (seq coll)]
     (if-let [_ (<= (inc built_in) max)]
@@ -106,16 +107,16 @@
     (vector acc built_in)))
 
 (defn- call-my-reduce [G peek built_in max weight]
-  "Starts a recursion for the function."
+  ;;Starts a recursion for the function.
   (let [prod (direct-prod peek (keys G))]
     (my-reduce
       (fn ([acc element] (link-pair-edges acc (first element) (second element) weight)))
       G prod built_in max)))
 
 (defn build-graph [g s & [w]]
-  "Builds a graph with vertexes (g) and edges (s).
-   The number of edges depends on the number of vertices. It can be from (N-1) to N(N-1).
-   The argument 'w' - is weight marker. If it is 'true' then a weight setting a random number else zero."
+  ;;Builds a graph with vertexes (g) and edges (s).
+  ;;The number of edges depends on the number of vertices. It can be from (N-1) to N(N-1).
+  ;;The argument 'w' - is weight marker. If it is 'true' then a weight setting a random number else zero.
   (let [graph (generate-empty-graph g)
         all (all-empty graph)
         c   (count graph)
@@ -143,3 +144,5 @@
                   cycles    (inc cycles)]
               (recur graph (nth all cycles nil) kinds built_in remaining check_alg cycles)))
           graph)))))
+
+(build-graph 4 5 true)
